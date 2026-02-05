@@ -20,12 +20,24 @@ interface ApiResponse {
   };
 }
 
+/**
+ * Sanitizes a string value, returning undefined for null, "null", empty, or whitespace-only values
+ */
+function sanitizeString(value: unknown): string | undefined {
+  if (value === null || value === undefined) return undefined;
+  if (typeof value !== 'string') return undefined;
+  const trimmed = value.trim();
+  if (trimmed === '' || trimmed.toLowerCase() === 'null') return undefined;
+  return trimmed;
+}
+
 export async function POST(request: NextRequest): Promise<NextResponse<ApiResponse>> {
   try {
     const body = await request.json();
 
-    // Validate required fields
-    if (!body.victimName || typeof body.victimName !== 'string' || body.victimName.trim() === '') {
+    // Sanitize and validate victim name (required)
+    const victimName = sanitizeString(body.victimName);
+    if (!victimName) {
       return NextResponse.json(
         {
           success: false,
@@ -35,12 +47,12 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
       );
     }
 
-    // Build report data with proper typing
+    // Build report data with proper sanitization
     const reportData: ReportData = {
-      victimName: body.victimName.trim(),
-      aggressorName: body.aggressorName?.trim() || undefined,
-      location: body.location?.trim() || undefined,
-      locationDetails: body.locationDetails?.trim() || undefined,
+      victimName,
+      aggressorName: sanitizeString(body.aggressorName),
+      location: sanitizeString(body.location),
+      locationDetails: sanitizeString(body.locationDetails),
       isImmediate: Boolean(body.isImmediate),
       hasWeapon: Boolean(body.hasWeapon),
       hasFirearm: Boolean(body.hasFirearm),
@@ -49,9 +61,9 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
       hasInjuries: Boolean(body.hasInjuries),
       isRecurring: Boolean(body.isRecurring),
       hasRestrainingOrder: Boolean(body.hasRestrainingOrder),
-      additionalInfo: body.additionalInfo?.trim() || undefined,
-      reporterPhone: body.reporterPhone?.trim() || undefined,
-      timestamp: body.timestamp || new Date().toISOString(),
+      additionalInfo: sanitizeString(body.additionalInfo),
+      reporterPhone: sanitizeString(body.reporterPhone),
+      timestamp: sanitizeString(body.timestamp) || new Date().toISOString(),
     };
 
     // Generate email content
