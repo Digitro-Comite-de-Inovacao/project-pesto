@@ -28,7 +28,7 @@ interface ApiResponse {
 
 // Viatura mapping - Guarnição number to internal ID
 const VIATURAS = [
-  { id: "356051", name: "Guarnição 01", number: "01" },
+  { id: "355067", name: "Guarnição 01", number: "01" },
   { id: "356052", name: "Guarnição 02", number: "02" },
   { id: "356053", name: "Guarnição 03", number: "03" },
   { id: "356054", name: "Guarnição 04", number: "04" },

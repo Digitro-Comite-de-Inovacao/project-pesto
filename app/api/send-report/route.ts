@@ -8,7 +8,7 @@ import {
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const RECIPIENT_EMAIL = 'pedro.felicio@digitro.com';
+const RECIPIENT_EMAIL = 'ncs@digitro.com';
 const SENDER_EMAIL = 'Mulher Amiga <noreply@inovacao.digitro.com>';
 
 interface ApiResponse {
